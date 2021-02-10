@@ -1,0 +1,76 @@
+#!/bin/python3
+
+#import math
+#import os
+#import random
+#import re
+#import sys
+#import threading
+
+def merge(left, right, count,qu,printThis,moveCounts):
+    if len(left) == 0:
+        return right
+    if len(right) == 0:
+        return left
+    #print('l ' + str(left))
+    #print('r ' + str(right))
+    result = []
+    index_left = index_right = 0
+    while len(result) < len(left) + len(right):
+        if left[index_left] <= right[index_right]:
+            result.append(left[index_left])
+            index_left += 1
+        else:
+            try:
+                moveCounts[left[index_left]] += 1
+                if moveCounts[left[index_left]] > 2:
+                    printThis[0] = 'Too chaotic'
+            except:
+                moveCounts[left[index_left]] = 1
+            if left[index_left]>right[-1] and len(right) > 2:
+                printThis[0] = 'Too chaotic'
+            result.append(right[index_right])
+            index_right += 1
+            count[0] += len(left) - index_left
+            
+        if index_right == len(right):
+            result += left[index_left:]
+            break
+        if index_left == len(left):
+            result += right[index_right:]
+            break
+    #print(result)
+    return result
+
+def merge_sort(array,count,qu,printThis,moveCounts):
+    if len(array) < 2:
+        return array
+    midpoint = len(array) // 2
+    #print('L ' + str(array[:midpoint]))
+    #print('R ' + str(array[midpoint:]))
+    return merge(left=merge_sort(array[:midpoint],count,qu,printThis,moveCounts),right=merge_sort(array[midpoint:],count,qu,printThis,moveCounts),count=count,qu=qu,printThis=printThis,moveCounts=moveCounts)    
+                
+def main(q):
+    count = [0]
+    printThis = ['']
+    longQueue = ''
+    moveCounts = {}
+
+    #longQ = list(map(int, longQueue.rstrip().split()))
+    
+    merged = merge_sort(q,count,q,printThis,moveCounts)
+    if printThis[0] == '':
+        print(count[0])
+    else:
+        print(printThis[0])
+
+if __name__ == '__main__':
+    t = int(input())
+
+    for t_itr in range(t):
+        n = int(input())
+
+        q = list(map(int, input().rstrip().split()))
+        
+        main(q)
+
